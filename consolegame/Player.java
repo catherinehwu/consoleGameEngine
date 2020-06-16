@@ -24,19 +24,19 @@ public class Player {
     }
 
     private int roll() {
-        /*
+
         //Human input dice roll
         String steps = game.readLine();
         int stepVal = Integer.valueOf(steps);
         return stepVal;
-        */
+
 
 
         // Random dice role
-        game.readLine();
-        int nextVal = game.getDice().nextVal();
-        System.out.println(name + " rolled a " + nextVal);
-        return nextVal;
+//        game.readLine();
+//        int nextVal = game.getDice().nextVal();
+//        System.out.println(name + " rolled a " + nextVal);
+//        return nextVal;
     }
 
     private void move(int num) {

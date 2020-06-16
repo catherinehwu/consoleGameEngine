@@ -11,7 +11,8 @@ public class Main {
     private static GameEngine game;
     private static String[] headerSetup =
             {"seqNum", "x", "y", "image", "sound", "text",
-                    "roll again", "move by", "move to", "skip"};
+                    "roll again", "move by", "move to", "skip",
+                    "roll to determine action", "conditions"};
 
     public static void main (String[] args) {
         try {
@@ -131,14 +132,15 @@ public class Main {
 
         game = new GameEngine(xRange, yRange, squareTotal);
 
-        for (int i = headersNum + 1; i < config.size(); i += 1) {
-            setUpSquareCSV(config.get(i));
+        for (int i = headersNum + 1; i < config.size(); ) {
+            i = setUpSquareCSV(config.get(i), i, config);
         }
     }
 
-    private static void setUpSquareCSV(String settings) {
+    private static int setUpSquareCSV(String settings, int row, List<String> config) {
         // Assume sqData has same number of columns as headerSetup
         String[] sqData = settings.split(",");
+        int count = row;
 
         // Defining Variables
         int seqNum = 0;
@@ -151,38 +153,55 @@ public class Main {
 
         for (int i = 0; i < sqData.length; i += 1) {
             String columnH = headerSetup[i];
-            if (columnH.equals("seqNum")) {
-                seqNum = Integer.valueOf(sqData[i]);
-            } else if (columnH.equals("x")) {
-                xVal = Integer.valueOf(sqData[i]);
-            } else if (columnH.equals("y")) {
-                yVal = Integer.valueOf(sqData[i]);
-            } else if (columnH.equals("image")) {
-                if (sqData[i] != null && !sqData[i].isEmpty()) {
-                    image = sqData[i];
-                }
-            } else if (columnH.equals("sound")) {
-                if (sqData[i] != null && !sqData[i].isEmpty()) {
-                    sound = sqData[i];
-                }
-            } else if (columnH.equals("text")) {
-                if (sqData[i] != null && !sqData[i].isEmpty()) {
-                    text = sqData[i];
-                }
-            } else if (sqData[i] != null && !sqData[i].isEmpty()) {
-                String action = actionDetails(sqData[i], i);
-                if (action != null) {
-                    listOfActions.add(action);
-                }
+            switch (columnH) {
+                case "seqNum":
+                    seqNum = Integer.valueOf(sqData[i]);
+                    break;
+                case "x":
+                    xVal = Integer.valueOf(sqData[i]);
+                    break;
+                case "y":
+                    yVal = Integer.valueOf(sqData[i]);
+                    break;
+                case "image":
+                    if (sqData[i] != null && !sqData[i].isEmpty()) {
+                        image = sqData[i];
+                    }
+                    break;
+                case "sound":
+                    if (sqData[i] != null && !sqData[i].isEmpty()) {
+                        sound = sqData[i];
+                    }
+                    break;
+                case "text":
+                    if (sqData[i] != null && !sqData[i].isEmpty()) {
+                        text = sqData[i];
+                    }
+                    break;
+                default:
+                    if (sqData[i] != null && !sqData[i].isEmpty()) {
+                        String[] results = actionDetails(sqData[i], i, count, config);
+                        String action = results[0];
+                        if (action != null) {
+                            listOfActions.add(action);
+                        }
+                        if (action.startsWith("G")) {
+                            count += Integer.valueOf(results[1]);
+                        }
+                    }
+                    break;
             }
         }
 
         game.addSquare(seqNum, xVal, yVal, image, text, sound, listOfActions);
+        count += 1;
+        return count;
     }
 
-    private static String actionDetails(String value, int column) {
+    private static String[] actionDetails(String value, int column, int row, List<String> config) {
         String colType = headerSetup[column];
         String action;
+        String additional = "0";
         switch(colType) {
             case "roll again":
                 action = "A";
@@ -202,10 +221,46 @@ public class Main {
             case "skip":
                 action = "E";
                 break;
+            case "roll to determine action":
+                String[] determinedAction = determine(row, config);
+                action = determinedAction[0];
+                additional = determinedAction[1];
+                break;
             default:
                 action = null;
                 System.out.println("Invalid action");
         }
-        return action;
+        return new String[]{action, additional};
+    }
+
+    private static String[] determine(int row, List<String> config) {
+        String result = "G";
+        String numbers = "";
+        String nextAction = "";
+
+        int rowTracker = row + 1;
+        String options = config.get(rowTracker);
+        String[] parsedOptions = options.split(",");
+        while(parsedOptions[0].isEmpty()) {
+            // Processing this row
+            for (int i = 0; i < parsedOptions.length; i += 1) {
+                String value = parsedOptions[i];
+                if (headerSetup[i].equals("conditions")) {
+                    numbers += value;
+                } else if (!parsedOptions[i].isEmpty()) {
+                    String[] actionKeys = actionDetails(parsedOptions[i], i, rowTracker, config);
+                    nextAction = actionKeys[0];
+                    row += Integer.valueOf(actionKeys[1]); // Increments row if needed
+                }
+            }
+            result += (numbers + nextAction);
+
+            // Advacing to next row
+            rowTracker += 1;
+            options = config.get(rowTracker);
+            parsedOptions = options.split(",");
+        }
+
+        return new String[] {result, "" + (rowTracker - row - 1)};
     }
 }
