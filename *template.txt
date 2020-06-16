@@ -1,0 +1,18 @@
+XRange YRange #ofSquares
+squareSeqNum Xcoord Ycoord pictureFile textFile soundFile 
+0 0 0 p.png t.txt s.wav
+0 0 0 * * * (stars if it has none)
+
+num x y pic text sound Attributes... (separated by space)
+0 0 0 p.png t.txt s.wav A B C5 D E F
+
+==========
+Action Key
+A - roll again
+B# - move # steps forward
+C# - move # steps backward
+D# - move to square #
+E - skip players next turn
+F - reverse game turn cycle
+G#[ActionKey] - if roll a #, do ActionKey. otherwise, nothing
+	i.e: G6D0 (if roll 6, go back to square 0)

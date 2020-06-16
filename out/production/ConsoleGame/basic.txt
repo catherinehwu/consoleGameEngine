@@ -1,0 +1,8 @@
+3 3 7
+0 0 0 * * * A5 B C D
+1 1 0 p.txt t.txt s.txt E F G90
+2 2 0 p1.txt * *
+3 2 1 * t1.txt s1.txt A B C
+4 2 2 * * * Z X Y10
+5 1 2 p2.txt * s2.txt H10 I9 J8 K7
+6 0 2 * * s3.txt O
