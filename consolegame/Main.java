@@ -25,9 +25,6 @@ public class Main {
             // initializeList(configText);
             initializeCSV(configText);
 
-            String test = "G1A5.2B6.";
-            String[] result = test.split("\\.");
-
             // Old version
             // initialize(config);
             game.setUpPlayers();
