@@ -25,6 +25,9 @@ public class Main {
             // initializeList(configText);
             initializeCSV(configText);
 
+            String test = "G1A5.2B6.";
+            String[] result = test.split("\\.");
+
             // Old version
             // initialize(config);
             game.setUpPlayers();
@@ -235,14 +238,14 @@ public class Main {
 
     private static String[] determine(int row, List<String> config) {
         String result = "G";
-        String numbers = "";
-        String nextAction = "";
 
         int rowTracker = row + 1;
         String options = config.get(rowTracker);
         String[] parsedOptions = options.split(",");
         while(parsedOptions[0].isEmpty()) {
             // Processing this row
+            String numbers = "";
+            String nextAction = "";
             for (int i = 0; i < parsedOptions.length; i += 1) {
                 String value = parsedOptions[i];
                 if (headerSetup[i].equals("conditions")) {
@@ -253,7 +256,7 @@ public class Main {
                     row += Integer.valueOf(actionKeys[1]); // Increments row if needed
                 }
             }
-            result += (numbers + nextAction);
+            result += (numbers + nextAction + ".");
 
             // Advacing to next row
             rowTracker += 1;

@@ -42,7 +42,7 @@ public class GameEngine {
     public void setUpPlayers() {
         System.out.println("Please input number of players (at least 1).");
         if (input.hasNextLine()) {
-            numOfPlayers = Integer.valueOf(input.nextLine());
+            numOfPlayers = Integer.valueOf(input.nextLine().trim());
         }
 
         for (int i = 1; i <= numOfPlayers; i += 1) {

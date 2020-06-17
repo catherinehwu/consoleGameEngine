@@ -130,6 +130,25 @@ public class Player {
                 // do the following action
                 System.out.println("Roll again to determine action!");
                 int number = roll();
+                String[] groups = key.substring(1).split("\\.");
+                String formatAlt = "([\\d]+)(.*)";
+                boolean matched = false;
+                for (String opt : groups) {
+                    Matcher partMatch = Pattern.compile(formatAlt).matcher(opt);
+                    int target = -1;
+                    if (partMatch.matches()) {
+                        target = Integer.valueOf(partMatch.group(1));
+                    }
+                    if (number == target) {
+                        matched = true;
+                        act(partMatch.group(2));
+                    }
+                }
+                if (!matched) {
+                    System.out.println("No action occurred!");
+                }
+
+                /*
                 String format = "[gG]([\\d]+)(.*)";
                 Matcher match = Pattern.compile(format).matcher(key);
                 int target = -1;
@@ -141,6 +160,7 @@ public class Player {
                 } else {
                     System.out.println("No action occurred!");
                 }
+                 */
                 break;
             default:
                 System.out.println("Unknown command.");
